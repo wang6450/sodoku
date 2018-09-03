@@ -1,0 +1,135 @@
+/*
+ *  Wang_Siyi_HW2Part1.h
+ *  Sudoku
+ *  Created by Siyi Wang, teamworked with Zhuochiwen Yu
+ *  Inspired by Prof. Ramavarapu Sreenivas's hint
+*/
+
+#ifndef Wang_Siyi_HW2Part1
+#define Wang_Siyi_HW2Part1
+
+#include <vector>
+#include <fstream>
+using std::vector;
+using namespace std;
+class Sudoku 
+{ 
+	// Private
+	int puzzle[9][9];
+		// Private member function that checks if the named row is valid
+	bool row_valid(int row,int col)
+	{
+		// write code that checks if "row" is valid
+		for (int i = 0;i < 9;i++)
+        if (puzzle[row][col]==puzzle[row][i]&&i!=col)//compare with every column in current row except its own value
+            return false;
+    return true;
+	}
+	
+	// Private member function that checks if the named column is valid
+	bool col_valid(int row,int col)
+	{
+		// check validity of "col" 
+		for (int j = 0;j < 9;j++)
+        if (puzzle[row][col] ==puzzle[j][col]&&j!=row )//compare with every row in current column except its own value
+            return false;
+    return true;
+	}
+	
+	// Private member function that checks if the named 3x3 block is valid
+	bool block_valid(int row, int col)
+	{
+		// check 3 x 3 block validity 
+		for (int h = (row/3)*3;h<(row/3)*3+3; h++)//to make the loop change with the certain values of the current row and column of the puzzle, 
+			                                       //I divided the row and column by 3 and round it, then add 3 back to make two loops to test certain blocks' validity
+		{
+        for (int l =(col/3)*3;l<(col/3)*3+3; l++)
+		{
+            if (puzzle[row][col] ==puzzle[h][l]&&h!=row&&l!=col)
+                return false;
+		}
+		}
+    return true;
+	}
+	
+public:
+	// Public member function that reads the incomplete puzzle
+	// we are not doing any checks on the input puzzle -- that is,
+	// we are assuming they are indeed valid
+	void read_puzzle(int argc, char * const argv[])
+	{
+		// write code that reads the input puzzle using the 
+		// guidelines of figure 23 of the bootcamp material
+		char input[10];
+	    cout<<"input the file name"<<endl;
+	    cin>> input;
+	     ifstream input_file;
+	    input_file.open(input);
+        if(input_file.is_open())
+	    {
+			for(int i=0;i<9;i++)
+		   {
+	       for(int j=0;j<9;j++)
+	       {
+		   input_file>>puzzle[i][j];//put the value in the file into the puzzle variable
+	       }
+		   }
+	    }
+	}
+	
+	// Public member function that prints the puzzle when called
+	void print_puzzle()
+	{
+		std::cout << std::endl << "Board Position" << std::endl;
+		for (int i = 0; i < 9; i++)
+		{
+			for (int j = 0; j < 9; j++)
+			{
+				// check if we have a legitimate integer between 1 and 9
+				if ((puzzle[i][j] >= 1) && (puzzle[i][j] <= 9))
+				{
+					// printing initial value of the puzzle with some formatting
+					std::cout << puzzle[i][j] << " ";
+				}
+				else {
+					// printing initial value of the puzzle with some formatting
+					std::cout << "X ";
+				}
+			}
+			std::cout << std::endl;
+		}
+	}
+	
+	// Public member function that (recursively) implements the brute-force 
+	// search for possible solutions to the incomplete Sudoku puzzle
+	bool Solve(int row, int col)
+	{
+		// this part of the code identifies the row and col number of the 
+		// first incomplete (i.e. 0) entry in the puzzle.  If the puzzle has
+		// no zeros, the variable row will be 9 => the puzzle is done, as 
+		// each entry is row-, col- and block-valid...
+	    // If there is no unassigned location, we are done
+		// use the pseudo code of figure 3 of the description
+		for (int i=row; i< 9; i++)
+			for(int j=0;j<9;j++)
+		{
+            if (puzzle[i][j] == 0)
+			{
+			 for (int num =1;num<=9;num++)
+                  {
+					 puzzle[i][j] = num;//make the unassigned position equal to a number
+					  if (row_valid(i,j)&&col_valid(i,j)&&block_valid(i,j)&&Solve(i,j))//check whether the nymber is valid
+						return true;//successful solved, go print the solved puzzle
+					else
+					puzzle[i][j] =0;//if the number is not valid, keep the position assigned
+			     }
+			  return false;
+			}			 
+		}
+		
+		return true;
+	}
+	
+};
+
+#endif
