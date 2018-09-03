@@ -1,0 +1,19 @@
+// Soduku Solver using Brute-Force Search implemted using 
+// recursion.
+// Written for IE523: Financial Computation by Prof. Sreenivas
+// and GE523: Discrete Event Systems
+//
+#include <iostream>
+#include "Wang_Siyi_HW2Part1.h"
+
+int main (int argc, char * const argv[]) 
+{
+	Sudoku x;
+	x.read_puzzle(argc, argv);//read the unsolved puzzle
+	x.print_puzzle();//print the unsolved puzzle
+	x.Solve(0,0);//solve the puzzle
+    //x.alternate_Solve(0, 0);
+	x.print_puzzle();//print the solved puzzle
+	
+    return 0;
+}
